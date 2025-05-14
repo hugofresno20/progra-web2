@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import graphene
 
 class Producto(graphene.ObjectType):
@@ -9,8 +10,10 @@ class Producto(graphene.ObjectType):
     disponible = graphene.Boolean()
 
 productos = [
-    {"id": 1, "nombre": "Teclado", "precio": 29.99, "stock": 10, "disponible": True},
-    {"id": 2, "nombre": "Ratón", "precio": 15.99, "stock": 0, "disponible": False},
+    {"id": 1, "nombre": "Ferrari", "precio": 500000, "stock": 3, "disponible": True},
+    {"id": 2, "nombre": "Mercedes a45 AMG", "precio": 60000, "stock": 6, "disponible": True},   
+    {"id": 3, "nombre": "BMW m4", "precio": 130000, "stock": 4, "disponible": True},
+
 ]
 
 class Query(graphene.ObjectType):
@@ -30,22 +33,22 @@ class ModificarStock(graphene.Mutation):
         for p in productos:
             if p["id"] == id:
                 p["stock"] += cantidad
-
                 if p["stock"] <= 0:
                     p["stock"] = 0
                     p["disponible"] = False
                 else:
                     p["disponible"] = True
-
                 return ModificarStock(producto=p)
         raise Exception("Producto no encontrado")
 
+# ==== DECLARACIÓN DE MUTACIONES ====
 class Mutation(graphene.ObjectType):
     modificar_stock = ModificarStock.Field()
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
 
 app = Flask(__name__)
+CORS(app) 
 
 @app.route("/graphql", methods=["GET", "POST", "OPTIONS"])
 def graphql_server():
@@ -96,6 +99,7 @@ def graphql_server():
             variable_values=data.get("variables"),
             operation_name=data.get("operationName")
         )
+
         response = {}
         if result.errors:
             response["errors"] = [str(error) for error in result.errors]
