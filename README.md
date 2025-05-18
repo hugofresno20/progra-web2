@@ -1,65 +1,127 @@
 # Tienda Reactiva - Concesionario Santander 
+ 
 
-Este concesionario de coches es una tienda online simulada desarrollada con **Vue 3** y **Vite**.
-
-##  Requisitos implementados
-
-- Cada producto tiene: `nombre`, `precio`, `stock`, `disponible`.
-- Cuando el stock de un producto baja a 0, `disponible` pasa automáticamente a `false` mientras tanto permanece en `true`.
-- La interfaz muestra qué productos están disponibles y cuáles no.
+Este proyecto es una tienda online de coches hecha con **Vue 3** en el frontend y **Flask + GraphQL** en el backend. Permite ver los productos disponibles, su stock y modificarlo en tiempo real.
 
 ---
 
-##  Preguntas teóricas
+## ¡ Nota sobre esta entrega !
 
-### 1. Vue no detecta cambios dentro de objetos reactivos de la forma que esperarías. ¿Cómo podrías observar un cambio en una propiedad anidada?
+Este repositorio incluye tanto el backend como el frontend.  
+La entrega oficial de esta práctica es el backend (`/backend`), que cumple con los requisitos del enunciado (Flask + GraphQL).
 
-Cuando usás reactive() en Vue, hay que tener en cuenta que no estará atento automáticamente a los cambios dentro de los objetos, como por ejemplo una propiedad específica de un producto.
+La carpeta `/frontend` se incluye solo como apoyo, ya que fue parte de una práctica anterior, y sirve para comprobar que el backend responde correctamente y actualiza el stock y la disponibilidad como debe ser.
 
-Entonces, para que Vue reaccione cuando cambia `producto.stock`, hay que decírselo explícitamente usando `watch()` y pasándole una función que devuelva justo esa propiedad:
+También se pueden hacer las pruebas directamente desde Postman o desde la interfaz GraphiQL incluida en el backend.
 
-```js
-watch(() => producto.stock, (nuevoStock) => {
-  producto.disponible = nuevoStock > 0
-})
+
+## ¿No carga la interfaz visual de GraphQL?
+
+El backend expone una interfaz visual de pruebas en:
+
+#### http://localhost:5001/graphql
+
+Sin embargo, en algunos navegadores (especialmente en Chrome o Safari), los scripts externos necesarios para que esa interfaz funcione (React, GraphiQL, etc.) pueden ser bloqueados por políticas de seguridad (CORS), mostrando una pantalla en blanco.
+
+### Cómo he validado la API
+
+Debido a este bloqueo, he ido validando el correcto funcionamiento del backend de dos formas:
+
+- Mediante **Postman**, enviando peticiones `POST` directamente a `/graphql`.
+- Arrancando el **frontend** (Vue) y comprobando que refleja correctamente los cambios en stock y disponibilidad.
+
+Ambas vías han confirmado que el backend responde como debe y mantiene la lógica de negocio correctamente implementada.
+
+
+## Tecnologías usadas
+
+- Vue 3 + Vite
+- Flask
+- Graphene (GraphQL para Python)
+- fetch() para conectar frontend y backend
+- flask-cors para evitar errores de CORS
+
+##  Requisitos implementados
+
+- Cada producto tiene: `id`, `nombre`, `precio`, `stock`, y `disponible`.
+- El stock se puede aumentar o reducir desde la interfaz.
+- Si el stock baja a 0, el producto pasa automáticamente a **no disponible**.
+- Si el stock vuelve a subir, pasa de nuevo a **disponible**.
+- Toda esta lógica se aplica en el **backend**, no en el frontend.
+
+---
+
+## Cómo iniciar 
+
+### Backend
+
+
+```bash
+cd backend #Acceder a la carpeta 
+source venv/bin/activate #Activar el entorno virtual
+pip install flask graphene flask-cors #Instalar dependencias
+python app.py #Ejecutar el backend
+
 ```
-De esta forma, cada vez que cambia el stock, Vue ejecuta la función que está dentro del watch() y actualiza el campo disponible automáticamente.
+ · El backend quedara inicializado en la siguiente ruta:
+ #### http://localhost:5001/graphql
+---
 
-### 2. watch() permite escuchar cambios en propiedades específicas dentro de reactive(), explica cómo funciona.
-watch() sirve para escuchar cuando cambia algo y ejecutar una función en ese momento.
+## Frontend 
 
-Cuando usamos reactive() para tener datos reactivos (como una lista de productos), podemos usar watch() para mirar una propiedad específica y reaccionar si cambia.
 
-```js
-watch(
-  () => producto.stock,        // esto le dice a Vue qué propiedad mirar
-  (nuevo, viejo) => {          // esta es la función que se ejecuta si cambia
-    console.log('Stock cambió:', viejo, '→', nuevo)
-  }
-)
+```bash
+cd frontend #Acceder al frontend
+npm install #Descarga lo necesario para que funcione vue
+npm run dev #Inicializa el front
 ```
+ · El frontend quedara inicializado en la siguiente ruta:
+ #### http://localhost:5173
 
-O sea, le pasás dos cosas:
+---
 
-1. Una función que devuelva lo que quieres observar 
+## Como probar el test
 
-2. Una función que se va a ejecutar cada vez que eso cambie
+El archivo `test.py`:
 
-Esto lo usamos para, por ejemplo, cambiar automáticamente `producto.disponible` según el stock, sin tener que hacerlo manualmente todo el tiempo.
+- Si se puede consultar correctamente la lista de productos.
+- Si el stock y la propiedad `disponible` se actualizan correctamente en el backend.
 
-### 3. ¿Cómo harías que un watch() detecte cambios en stock dentro de un array de productos?
-Cuando tienes un array de objetos con reactive() (como una lista de productos), Vue no puede "mirar" todos los stock automáticamente.
+Para ejecutar:
 
-Entonces, lo que hay que hacer es recorrer el array y ponerle un watch() a cada producto individualmente, observando la propiedad `stock`.
-
-```js
-productos.forEach((producto) => {
-    watch(
-        () => producto.stock,
-        (nuevoStock) => {
-            producto.disponible = nuevoStock > 0
-        }
-    )
-})
+```bash
+cd backend #Accede a la carpeta del backend
+source venv/bin/activate #Activar el entorno virtual
+python test.py #Ejecuta archivo de test
 ```
-De esta forma, cada vez que cambia el stock de un producto, se actualiza también su `disponible`.
+## Pruebas y validación desde Postman
+
+También puedes probar la API usando **Postman**. Solo necesitas enviar peticiones `POST` a la siguiente URL:
+#### http://localhost:5001/graphql
+
+1. Selecciona el método `POST`
+2. Ve a la pestaña **Body**
+3. Marca la opción **raw**
+4. Elige el tipo `JSON`
+
+- Consulta para ver todos los productos:
+
+```json
+{
+  "query": "{ productos { id nombre stock disponible } }"
+}
+```
+Esto permitira comprobar el estado actual del `stock` , si reduce el stock desde el front puede comprobar aquí si esto se ha realizado.
+
+ - Otra consulta que puede realizar para reducir el stock
+```json
+{
+  "query": "mutation { modificarStock(id: 1, cantidad: -1) { producto { id stock disponible } } }"
+}
+```
+- Otra consulta que puede realizar para aumentar el stock
+```json
+{
+  "query": "mutation { modificarStock(id: 1, cantidad: 5) { producto { id stock disponible } } }"
+}
+```
