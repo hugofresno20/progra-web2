@@ -41,7 +41,7 @@ Este proyecto es una tienda online de coches hecha con **Vue 3** en el frontend 
 ```bash
 cd backend #Acceder a la carpeta 
 source venv/bin/activate #Activar el entorno virtual
-pip install flask graphene flask-cors #Instalar dependeicas
+pip install flask graphene flask-cors #Instalar dependencias
 python app.py #Ejecutar el backend
 
 ```
@@ -53,7 +53,7 @@ python app.py #Ejecutar el backend
 
 
 ```bash
-cd frontend
+cd frontend #Acceder al frontend
 npm install #Descarga lo necesario para que funcione vue
 npm run dev #Inicializa el front
 ```
@@ -85,7 +85,8 @@ También puedes probar la API usando **Postman**. Solo necesitas enviar peticion
 2. Ve a la pestaña **Body**
 3. Marca la opción **raw**
 4. Elige el tipo `JSON`
-5. Pega este contenido para consultar todos los productos:
+
+- Consulta para ver todos los productos:
 
 ```json
 {
