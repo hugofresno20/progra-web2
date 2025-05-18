@@ -1,4 +1,9 @@
 # Tienda Reactiva - Concesionario Santander 
+ 
+
+Este proyecto es una tienda online de coches hecha con **Vue 3** en el frontend y **Flask + GraphQL** en el backend. Permite ver los productos disponibles, su stock y modificarlo en tiempo real.
+
+---
 
 ## ¡ Nota sobre esta entrega !
 
@@ -9,11 +14,24 @@ La carpeta `/frontend` se incluye solo como apoyo, ya que fue parte de una prác
 
 También se pueden hacer las pruebas directamente desde Postman o desde la interfaz GraphiQL incluida en el backend.
 
---- 
 
-Este proyecto es una tienda online de coches hecha con **Vue 3** en el frontend y **Flask + GraphQL** en el backend. Permite ver los productos disponibles, su stock y modificarlo en tiempo real.
+## ¿No carga la interfaz visual de GraphQL?
 
----
+El backend expone una interfaz visual de pruebas en:
+
+#### http://localhost:5001/graphql
+
+Sin embargo, en algunos navegadores (especialmente en Chrome o Safari), los scripts externos necesarios para que esa interfaz funcione (React, GraphiQL, etc.) pueden ser bloqueados por políticas de seguridad (CORS), mostrando una pantalla en blanco.
+
+### Cómo he validado la API
+
+Debido a este bloqueo, he ido validando el correcto funcionamiento del backend de dos formas:
+
+- Mediante **Postman**, enviando peticiones `POST` directamente a `/graphql`.
+- Arrancando el **frontend** (Vue) y comprobando que refleja correctamente los cambios en stock y disponibilidad.
+
+Ambas vías han confirmado que el backend responde como debe y mantiene la lógica de negocio correctamente implementada.
+
 
 ## Tecnologías usadas
 
