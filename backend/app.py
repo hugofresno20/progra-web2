@@ -41,7 +41,6 @@ class ModificarStock(graphene.Mutation):
                 return ModificarStock(producto=p)
         raise Exception("Producto no encontrado")
 
-# ==== DECLARACIÓN DE MUTACIONES ====
 class Mutation(graphene.ObjectType):
     modificar_stock = ModificarStock.Field()
 
